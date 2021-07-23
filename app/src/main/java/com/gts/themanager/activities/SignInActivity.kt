@@ -1,14 +1,15 @@
-package com.gts.themanager
+package com.gts.themanager.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.WindowManager
-import kotlinx.android.synthetic.main.activity_sign_up.*
+import com.gts.themanager.R
+import kotlinx.android.synthetic.main.activity_sign_in.*
 
-class SignUpActivity : AppCompatActivity() {
+class SignInActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sign_up)
+        setContentView(R.layout.activity_sign_in)
 
         setupActionBar()
 
@@ -19,7 +20,7 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun setupActionBar(){
-        setSupportActionBar(toolbar_sign_up_activity)
+        setSupportActionBar(toolbar_sign_in_activity)
 
         val actionBar = supportActionBar
         if (actionBar != null){
@@ -27,6 +28,6 @@ class SignUpActivity : AppCompatActivity() {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_black_color_back_24dp)
         }
 
-        toolbar_sign_up_activity.setNavigationOnClickListener { onBackPressed() }
+        toolbar_sign_in_activity.setNavigationOnClickListener { onBackPressed() }
     }
 }

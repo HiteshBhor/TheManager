@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:background="@drawable/ic_splash_background"
-    tools:context=".SplashActivity">
+    tools:context=".activities.SplashActivity">
 
 
     <TextView
