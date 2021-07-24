@@ -8,6 +8,8 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.gts.themanager.R
+import com.gts.themanager.firebase.FirestoreClass
+import com.gts.themanager.models.User
 import kotlinx.android.synthetic.main.activity_sign_up.*
 
 class SignUpActivity : BaseActivity() {
@@ -20,6 +22,17 @@ class SignUpActivity : BaseActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         setupActionBar()
+    }
+
+    fun userRegisteredSuccess(){
+        Toast.makeText(
+            this,
+            "You have successfully registered. ",
+            Toast.LENGTH_SHORT
+        ).show()
+        hideProgressDialog()
+        FirebaseAuth.getInstance().signOut()
+        finish()
     }
 
     private fun setupActionBar(){
@@ -72,20 +85,15 @@ class SignUpActivity : BaseActivity() {
             showProgressDialog(resources.getString(R.string.please_wait))
             FirebaseAuth.getInstance()
                 .createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener {
+                .addOnCompleteListener { task ->
 
-                        task ->
-                    hideProgressDialog()
                     if (task.isSuccessful) {
                         val firebaseUser: FirebaseUser = task.result!!.user!!
                         val registeredEmail = firebaseUser.email!!
-                        Toast.makeText(
-                            this,
-                            "$name you have successfully registered with email address $registeredEmail",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        FirebaseAuth.getInstance().signOut()
-                        finish()
+                        val user = User(firebaseUser.uid, name, registeredEmail)
+
+                        FirestoreClass().registerUser(this, user)
+
                     } else {
                         Toast.makeText(this, task.exception!!.message, Toast.LENGTH_SHORT).show()
                     }

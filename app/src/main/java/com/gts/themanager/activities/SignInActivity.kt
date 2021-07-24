@@ -11,6 +11,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.gts.themanager.R
+import com.gts.themanager.firebase.FirestoreClass
+import com.gts.themanager.models.User
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.android.synthetic.main.activity_sign_up.*
 
@@ -35,6 +37,12 @@ class SignInActivity : BaseActivity() {
 
             signInRegisteredUser()
         }
+    }
+
+    fun signInSuccess(user: User){
+        hideProgressDialog()
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
     private fun setupActionBar(){
@@ -78,15 +86,10 @@ class SignInActivity : BaseActivity() {
 
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
+                    hideProgressDialog()
                     if (task.isSuccessful) {
 
-                        hideProgressDialog()
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d("Sign In", "signInWithEmail:success")
-                        val user = auth.currentUser
-                        startActivity(Intent(this, MainActivity::class.java))
-                        finish()
-
+                        FirestoreClass().signInUser(this)
                     } else {
 
                         hideProgressDialog()
