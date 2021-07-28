@@ -70,7 +70,8 @@ class   MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedLi
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.nav_my_profile ->{
-                Toast.makeText(this@MainActivity, "MyProfile", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this@MainActivity, MyProfileActivity::class.java))
+
             }
 
             R.id.nav_sign_out ->{
