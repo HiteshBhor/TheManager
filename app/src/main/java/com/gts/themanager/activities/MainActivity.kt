@@ -3,7 +3,6 @@ package com.gts.themanager.activities
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.core.view.GravityCompat
 import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
@@ -25,7 +24,7 @@ class   MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedLi
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        FirestoreClass().signInUser(this)
+        FirestoreClass().loadUserdata(this)
     }
 
     private fun setupActionBar(){

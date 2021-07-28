@@ -1,7 +1,6 @@
 package com.gts.themanager.activities
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -14,7 +13,6 @@ import com.gts.themanager.R
 import com.gts.themanager.firebase.FirestoreClass
 import com.gts.themanager.models.User
 import kotlinx.android.synthetic.main.activity_sign_in.*
-import kotlinx.android.synthetic.main.activity_sign_up.*
 
 class SignInActivity : BaseActivity() {
 
@@ -89,7 +87,7 @@ class SignInActivity : BaseActivity() {
                     hideProgressDialog()
                     if (task.isSuccessful) {
 
-                        FirestoreClass().signInUser(this)
+                        FirestoreClass().loadUserdata(this)
                     } else {
 
                         hideProgressDialog()
