@@ -1,9 +1,11 @@
 package com.gts.themanager.firebase
 
+import android.app.Activity
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.gts.themanager.activities.MainActivity
 import com.gts.themanager.activities.SignInActivity
 import com.gts.themanager.activities.SignUpActivity
 import com.gts.themanager.models.User
@@ -27,19 +29,34 @@ class FirestoreClass {
             }
     }
 
-    fun signInUser(activity: SignInActivity){
+    fun signInUser(activity: Activity) {
 
         mFirestore.collection(Constants.USERS)
             .document(getCurrentUserId())
             .get()
             .addOnSuccessListener { document ->
-                val loggedInUser = document.toObject(User::class.java)
-                if (loggedInUser != null)
-                activity.signInSuccess(loggedInUser)
+                val loggedInUser = document.toObject(User::class.java)!!
 
-            }.addOnFailureListener{
-                    e->
-                Log.e("SignInUser", "Errrrorrrr")
+                when (activity) {
+                    is SignInActivity -> {
+                        activity.signInSuccess(loggedInUser)
+                    }
+                    is MainActivity -> {
+                        activity.updateNavigationUserDetails(loggedInUser)
+                    }
+                }
+
+            }.addOnFailureListener { e ->
+
+                when (activity) {
+                    is SignInActivity -> {
+                        activity.hideProgressDialog()
+                    }
+                    is MainActivity -> {
+                        activity.hideProgressDialog()
+                    }
+                }
+                Log.e("SignInUser", "Errrrorrrr", e)
             }
     }
 
