@@ -60,7 +60,7 @@ class   MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedLi
             .load(user.image)
             .centerCrop()
             .placeholder(R.drawable.ic_user_place_holder)
-            .into(iv_user_image);
+            .into(iv_profile_user_image);
 
         tv_username.text = user.name
 
