@@ -10,6 +10,7 @@ import com.gts.themanager.activities.*
 import com.gts.themanager.models.Board
 import com.gts.themanager.models.User
 import com.gts.themanager.utils.Constants
+import java.sql.Array
 
 class FirestoreClass {
 
@@ -50,6 +51,29 @@ class FirestoreClass {
 
     }
 
+    fun getBoardsList(activity: MainActivity){
+        mFirestore.collection(Constants.BOARDS)
+            .whereArrayContains(Constants.ASSIGNED_TO, getCurrentUserId())
+            .get()
+            .addOnSuccessListener {
+                document ->
+                Log.i(activity.javaClass.simpleName, document.documents.toString())
+                val boardList: ArrayList<Board> = ArrayList()
+                for(i in document.documents){
+                    val board = i.toObject(Board::class.java)!!
+                    board.documentId = i.id
+                    boardList.add(board)
+                }
+
+                activity.populateBoardsListToUI(boardList)
+
+            }.addOnFailureListener{ e ->
+
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error while creating a board.", e)
+            }
+    }
+
     fun updateUserProfileData(activity: MyProfileActivity,
                               userHashMap: HashMap<String, Any>){
         mFirestore.collection(Constants.USERS)
@@ -70,7 +94,7 @@ class FirestoreClass {
             }
     }
 
-    fun loadUserdata(activity: Activity) {
+    fun loadUserdata(activity: Activity, readBoardsList: Boolean = false) {
 
         mFirestore.collection(Constants.USERS)
             .document(getCurrentUserId())
@@ -83,7 +107,7 @@ class FirestoreClass {
                         activity.signInSuccess(loggedInUser)
                     }
                     is MainActivity -> {
-                        activity.updateNavigationUserDetails(loggedInUser)
+                        activity.updateNavigationUserDetails(loggedInUser, readBoardsList)
                     }
                     is MyProfileActivity -> {
                         activity.setUserDataInUI(loggedInUser)
