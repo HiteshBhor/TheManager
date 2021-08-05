@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.gts.themanager.R
 import com.gts.themanager.firebase.FirestoreClass
 import com.gts.themanager.models.User
+import com.gts.themanager.utils.Constants
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -24,6 +25,8 @@ class   MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedLi
         const val MY_PROFILE_REQUEST_CODE: Int = 11
     }
 
+    private lateinit var mUserName: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -35,8 +38,9 @@ class   MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedLi
         FirestoreClass().loadUserdata(this)
 
         fab_createBoard.setOnClickListener{
-            startActivity(Intent(this, CreateBoardActivity::class.java))
-
+            val intent = Intent(this, CreateBoardActivity::class.java)
+            intent.putExtra(Constants.NAME, mUserName)
+            startActivity(intent)
         }
     }
 
@@ -67,6 +71,8 @@ class   MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedLi
     }
 
     fun updateNavigationUserDetails(user: User){
+
+        mUserName = user.name
 
         Glide
             .with(this@MainActivity)

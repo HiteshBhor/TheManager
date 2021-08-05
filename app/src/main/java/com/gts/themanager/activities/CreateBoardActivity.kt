@@ -7,24 +7,37 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.gts.themanager.R
+import com.gts.themanager.firebase.FirestoreClass
+import com.gts.themanager.models.Board
 import com.gts.themanager.utils.Constants
 import kotlinx.android.synthetic.main.activity_create_board.*
 import java.io.IOException
 
-class CreateBoardActivity : AppCompatActivity() {
+class CreateBoardActivity : BaseActivity() {
 
     private var mSelectedImageFileUri: Uri? = null
+
+    private lateinit var mUserName: String
+
+    private var mBoardImageURL: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_board)
 
         setupActionBar()
+
+        if (intent.hasExtra(Constants.NAME)){
+            mUserName = intent.getStringExtra(Constants.NAME).toString()
+        }
 
 
         iv_board_image.setOnClickListener{
@@ -42,6 +55,71 @@ class CreateBoardActivity : AppCompatActivity() {
                 )
             }
         }
+
+        btn_create.setOnClickListener{
+
+            if (mSelectedImageFileUri != null){
+                uploadBoardImage()
+            }else{
+                showProgressDialog(resources.getString(R.string.please_wait))
+                createBoard()
+            }
+        }
+    }
+
+    private fun createBoard(){
+
+        val assignedUsersArrayList: ArrayList<String> = ArrayList()
+        assignedUsersArrayList.add(getCurrentUserID())
+
+        var board = Board(
+            et_board_name.text.toString(),
+            mBoardImageURL,
+            mUserName,
+            assignedUsersArrayList
+        )
+        FirestoreClass().createBoard(this, board)
+
+    }
+
+    private fun uploadBoardImage(){
+        showProgressDialog(resources.getString(R.string.please_wait))
+
+        val sRef: StorageReference =
+            FirebaseStorage.getInstance().reference.child(
+                "BOARD_IMAGE"
+                        + System.currentTimeMillis()
+                        + "." + Constants.getFileExtension(this, mSelectedImageFileUri))
+
+        sRef.putFile(mSelectedImageFileUri!!).addOnSuccessListener {
+                taskSnapshot ->
+            Log.i(
+                "Board Image URL",
+                taskSnapshot.metadata!!.reference!!.downloadUrl.toString()
+            )
+
+            taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener {
+                    uri ->
+                Log.i("Downloadable image URl", uri.toString())
+                mBoardImageURL = uri.toString()
+
+                createBoard()
+            }
+        }.addOnFailureListener{
+                exception ->
+            Toast.makeText(
+                this,
+                exception.message,
+                Toast.LENGTH_LONG
+            ).show()
+
+            hideProgressDialog()
+        }
+    }
+
+    fun boardCreatedSuccessfully(){
+        hideProgressDialog()
+        finish()
     }
 
     private fun setupActionBar(){

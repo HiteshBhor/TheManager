@@ -6,10 +6,8 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import com.gts.themanager.activities.MainActivity
-import com.gts.themanager.activities.MyProfileActivity
-import com.gts.themanager.activities.SignInActivity
-import com.gts.themanager.activities.SignUpActivity
+import com.gts.themanager.activities.*
+import com.gts.themanager.models.Board
 import com.gts.themanager.models.User
 import com.gts.themanager.utils.Constants
 
@@ -29,6 +27,27 @@ class FirestoreClass {
                 e->
                 Log.e(activity.javaClass.simpleName, "Errrrorrrr")
             }
+    }
+
+    fun createBoard(activity: CreateBoardActivity, board: Board){
+
+        mFirestore.collection(Constants.BOARDS)
+            .document()
+            .set(board, SetOptions.merge())
+            .addOnSuccessListener {
+                Log.e(activity.javaClass.simpleName, "Board Created Successfully!")
+                Toast.makeText(activity, "Board Created Successfully!", Toast.LENGTH_SHORT).show()
+                activity.boardCreatedSuccessfully()
+            }.addOnFailureListener{
+                exception ->
+                activity.hideProgressDialog()
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while creating a Board.",
+                    exception
+                )
+            }
+
     }
 
     fun updateUserProfileData(activity: MyProfileActivity,
