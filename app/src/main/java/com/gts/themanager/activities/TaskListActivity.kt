@@ -2,10 +2,13 @@ package com.gts.themanager.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.gts.themanager.R
 import com.gts.themanager.adapters.BoardItemsAdapter
+import com.gts.themanager.adapters.TaskListItemsAdapter
 import com.gts.themanager.firebase.FirestoreClass
 import com.gts.themanager.models.Board
+import com.gts.themanager.models.Task
 import com.gts.themanager.utils.Constants
 import kotlinx.android.synthetic.main.activity_my_profile.*
 import kotlinx.android.synthetic.main.activity_task_list.*
@@ -38,5 +41,15 @@ class TaskListActivity : BaseActivity() {
     fun boardDetails(board: Board){
         hideProgressDialog()
         setupActionBar(board.name)
+
+        val addTaskList = Task(resources.getString(R.string.add_list))
+        board.taskList.add(addTaskList)
+
+        rv_task_list.layoutManager = LinearLayoutManager(
+            this, LinearLayoutManager.HORIZONTAL, false)
+        rv_task_list.setHasFixedSize(true)
+
+        val adapter = TaskListItemsAdapter(this, board.taskList)
+        rv_task_list.adapter = adapter
     }
 }
